@@ -6,11 +6,19 @@
 TARGET = edowser
 DEPENDPATH += .
 INCLUDEPATH += .
+INCLUDEPATH += ../manymouse
+LIBS += -lX11 -lXi
 
 # Input
-HEADERS += edowser.h
-SOURCES += edowser.cpp
+HEADERS += edowser.h xmouse.h 
+SOURCES += edowser.cpp xmouse.cpp
 
+# manymouse
+HEADERS += ../manymouse/*.h 
+SOURCES += ../manymouse/*.c
+# ../manymouse/x11_xinput2.c ../manymouse/linux_evdev.c
+
+# qtbrowserplugin
 include(../qt-solutions/qtbrowserplugin/src/qtbrowserplugin.pri)
  
  

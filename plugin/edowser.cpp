@@ -1,4 +1,5 @@
 #include "edowser.h"
+#include "xmouse.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -7,14 +8,24 @@
 #include <QEvent>
 #include <QResizeEvent>
 #include <QTimer>
+#include <QX11EmbedContainer>
+#include <QThreadPool>
 
 Edowser::Edowser(QWidget *parent)
-  : QWidget(parent) {  
+  : QWidget(parent) {
   
-  container = new QX11EmbedContainer(this);
-  container->setGeometry(0, 0, this->width(), this->height());
+  //we cant get focus the normal way, so we use manymouse/xlib to get mousevents
+  xmouse = new Xmouse();
+  connect(xmouse, SIGNAL(press(int, int, int)), this, SLOT(mouse_press(int, int, int)));
+  connect(xmouse, SIGNAL(release(int, int, int)), this, SLOT(mouse_release(int, int, int)));
+  QThreadPool::globalInstance()->start(xmouse);
 
+  //create a containser-widget
+  container = new QX11EmbedContainer(this);
+  container->setGeometry(0, 0, width(), height());
   qDebug() << "XID:" << container->winId();
+  
+  //start an editor that embeds itself into our widget
   QString command = QString("xterm ");
   command.append("-into ");
   command.append(QString::number(container->winId()));
@@ -23,33 +34,28 @@ Edowser::Edowser(QWidget *parent)
   process->start(command);
   qDebug() << "editor PID:" << process->pid();
   process->waitForStarted();
-
-
-  //there appears to be a bug in emacs that makes it use a tiny part of the window until it's resized
-  //to make matters worse, this has no effect until it's completely finsihed with its startup files
-  //QTimer::singleShot(1000, this, SLOT(resizeNudge()));
-  //QTimer::singleShot(5000, this, SLOT(resizeNudge()));
-  //QTimer::singleShot(10000, this, SLOT(resizeNudge()));
-
+  
+  container->show();
 }  
 
 Edowser::~Edowser(){
+  xmouse->quit(); //xmouse is deleted by QTreadPool
+  QThreadPool::globalInstance()->waitForDone();
+  process->terminate();
   process->waitForFinished();
-  delete process;
   delete container;
+  delete process;
 }
 
-void Edowser::resizeNudge() {
-  const int width = this->width();
-  const int height = this->height();
-
-  qDebug() << "resizeNudge()";
-  
-  QResizeEvent event1(QSize(width, height), QSize(width + 1, height + 1));
-  QResizeEvent event2(QSize(width + 1, height + 1), QSize(width, height));
-  QCoreApplication::sendEvent(container, &event1);
-  QCoreApplication::sendEvent(container, &event2);
+void Edowser::mouse_press(int x, int y, int button) {
+  qDebug() << "mouse_press: " << x << y << button; 
 }
+
+void Edowser::mouse_release(int x, int y, int button) {
+  qDebug() << "mouse_release: " << x << y << button; 
+}
+
+
 
 int main(int argc, char *argv[]){
   QApplication app(argc, argv);
