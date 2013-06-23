@@ -14,8 +14,20 @@ Xmouse::Xmouse(QObject *parent)
   }
   window = DefaultRootWindow(display);
 }
+
+void Xmouse::quit() {
+  done = true;
+}
+
+void Xmouse::resetFocus() {
+  XSetInputFocus(display, None, RevertToNone, CurrentTime);
+}
+
+
+
 Xmouse::~Xmouse() {
   ManyMouse_Quit();
+  XFree(display);
 }
 
 void Xmouse::run() {
@@ -41,6 +53,3 @@ void Xmouse::run() {
   }
 }
 
-void Xmouse::quit() {
-  done = true;
-}

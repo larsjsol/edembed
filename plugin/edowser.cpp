@@ -3,11 +3,6 @@
 
 #include <QApplication>
 #include <QDebug>
-#include <QRect>
-#include <QStringList>
-#include <QEvent>
-#include <QResizeEvent>
-#include <QTimer>
 #include <QX11EmbedContainer>
 #include <QThreadPool>
 
@@ -17,13 +12,13 @@ Edowser::Edowser(QWidget *parent)
   //we cant get focus the normal way, so we use manymouse/xlib to get mousevents
   xmouse = new Xmouse();
   connect(xmouse, SIGNAL(press(int, int, int)), this, SLOT(mouse_press(int, int, int)));
-  connect(xmouse, SIGNAL(release(int, int, int)), this, SLOT(mouse_release(int, int, int)));
   QThreadPool::globalInstance()->start(xmouse);
 
   //create a containser-widget
   container = new QX11EmbedContainer(this);
   container->setGeometry(0, 0, width(), height());
   qDebug() << "XID:" << container->winId();
+  container->show();
   
   //start an editor that embeds itself into our widget
   QString command = QString("xterm ");
@@ -34,8 +29,6 @@ Edowser::Edowser(QWidget *parent)
   process->start(command);
   qDebug() << "editor PID:" << process->pid();
   process->waitForStarted();
-  
-  container->show();
 }  
 
 Edowser::~Edowser(){
@@ -47,12 +40,26 @@ Edowser::~Edowser(){
   delete process;
 }
 
+
+//we cant get focus the normal way, so we use manymouse/xlib to get mousevents
 void Edowser::mouse_press(int x, int y, int button) {
-  qDebug() << "mouse_press: " << x << y << button; 
+  (void)button;
+  QPoint lpoint = mapFromGlobal(QPoint(x, y));
+  if (geometry().contains(lpoint)) {
+    xmouse->resetFocus();
+    QApplication::setActiveWindow(this);
+    qDebug() << "click inside";
+  }
+  else {
+    xmouse->resetFocus();
+    qDebug() << "click outside";
+  }
 }
 
 void Edowser::mouse_release(int x, int y, int button) {
-  qDebug() << "mouse_release: " << x << y << button; 
+  (void)x;
+  (void)y;
+  (void)button;
 }
 
 

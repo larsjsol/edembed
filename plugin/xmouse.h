@@ -17,6 +17,7 @@ class Xmouse : public QObject, public QRunnable
   public:
   Xmouse(QObject *parent = 0);
   void quit();
+  void resetFocus();
   virtual ~Xmouse();
 protected:
   void run();

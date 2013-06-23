@@ -24,7 +24,6 @@ public slots:
 private:
   QProcess *process;
   QX11EmbedContainer *container;
-
   Xmouse *xmouse;
 };
 
