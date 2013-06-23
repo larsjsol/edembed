@@ -1,0 +1,5 @@
+plugin/Makefile
+[#]*
+moc_*
+*.o
+*.so

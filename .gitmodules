@@ -1,3 +1,4 @@
 [submodule "qt-solutions"]
 	path = qt-solutions
 	url = git://gitorious.org/qt-solutions/qt-solutions.git
+    ignore = dirty
