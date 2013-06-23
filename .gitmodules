@@ -2,3 +2,7 @@
 	path = qt-solutions
 	url = git://gitorious.org/qt-solutions/qt-solutions.git
     ignore = dirty
+[submodule "manymouse"]
+	path = manymouse
+	url = ./manymouse
+	ignore = dirty
