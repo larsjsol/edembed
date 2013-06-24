@@ -9,7 +9,7 @@
 
 #include "xmouse.h"
 
-class Edowser : public QWidget {
+class Edowser : public QWidget, public QtNPBindable {
 Q_OBJECT
 Q_CLASSINFO("MIME", "application/x-edowser:---:--")
 //Q_CLASSINFO("ToSuperClass", "Edowser")
@@ -20,7 +20,8 @@ public:
 public slots:
   void mouse_press(int x, int y, int button);
   void mouse_release(int x, int y, int button);
-  
+ protected:
+  void resizeEvent(QResizeEvent *event);
 private:
   QProcess *process;
   QX11EmbedContainer *container;

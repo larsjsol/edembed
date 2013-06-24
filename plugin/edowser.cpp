@@ -6,20 +6,27 @@
 #include <QX11EmbedContainer>
 #include <QThreadPool>
 
+
 Edowser::Edowser(QWidget *parent)
-  : QWidget(parent) {
+  : QWidget(parent), QtNPBindable() {
   
   //we cant get focus the normal way, so we use manymouse/xlib to get mousevents
   xmouse = new Xmouse();
   connect(xmouse, SIGNAL(press(int, int, int)), this, SLOT(mouse_press(int, int, int)));
+  // connect(xmouse, SIGNAL(release(int, int, int)), this, SLOT(mouse_release(int, int, int)));
   QThreadPool::globalInstance()->start(xmouse);
 
   //create a containser-widget
   container = new QX11EmbedContainer(this);
-  container->setGeometry(0, 0, width(), height());
   qDebug() << "XID:" << container->winId();
-  container->show();
   
+  qDebug() << "parameters:";
+  QMap<QByteArray, QVariant>::const_iterator i = parameters().constBegin();
+  while (i != parameters().constEnd()) {
+    qDebug() << i.key() << "=" << i.value();
+    ++i;
+  }
+    
   //start an editor that embeds itself into our widget
   QString command = QString("xterm ");
   command.append("-into ");
@@ -29,6 +36,8 @@ Edowser::Edowser(QWidget *parent)
   process->start(command);
   qDebug() << "editor PID:" << process->pid();
   process->waitForStarted();
+  
+
 }  
 
 Edowser::~Edowser(){
@@ -40,28 +49,27 @@ Edowser::~Edowser(){
   delete process;
 }
 
-
-//we cant get focus the normal way, so we use manymouse/xlib to get mousevents
 void Edowser::mouse_press(int x, int y, int button) {
-  (void)button;
-  QPoint lpoint = mapFromGlobal(QPoint(x, y));
-  if (geometry().contains(lpoint)) {
+  if (button == 0) { //first (left) mouse button
     xmouse->resetFocus();
-    QApplication::setActiveWindow(this);
-    qDebug() << "click inside";
-  }
-  else {
-    xmouse->resetFocus();
-    qDebug() << "click outside";
-  }
+  
+    QPoint lpoint = mapFromGlobal(QPoint(x, y));
+    if (geometry().contains(lpoint)) {
+      QApplication::setActiveWindow(this);
+    }
+  } 
 }
 
+//it appears focus is broken in qtbrowserplugin, here we try to set it manualy instead
 void Edowser::mouse_release(int x, int y, int button) {
   (void)x;
   (void)y;
   (void)button;
 }
 
+void Edowser::resizeEvent(QResizeEvent *event) {
+  container->setGeometry(0, 0, event->size().width(), event->size().width());
+}
 
 
 int main(int argc, char *argv[]){

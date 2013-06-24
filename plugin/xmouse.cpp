@@ -23,8 +23,6 @@ void Xmouse::resetFocus() {
   XSetInputFocus(display, None, RevertToNone, CurrentTime);
 }
 
-
-
 Xmouse::~Xmouse() {
   ManyMouse_Quit();
   XFree(display);
