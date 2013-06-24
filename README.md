@@ -1,4 +1,4 @@
 edowser
 =======
 
-Lets you use proper editors editing online text
+Lets you use proper editors when editing online text
