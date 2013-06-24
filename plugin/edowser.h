@@ -20,9 +20,11 @@ public:
 public slots:
   void mouse_press(int x, int y, int button);
   void mouse_release(int x, int y, int button);
- protected:
+  void dummy_resize();
+protected:
   void resizeEvent(QResizeEvent *event);
 private:
+  bool grabKB;
   QProcess *process;
   QX11EmbedContainer *container;
   Xmouse *xmouse;

@@ -2,7 +2,6 @@
 #define __XMOUSE_H_
 
 #include <QObject>
-#include <QDebug>
 #include <QRunnable>
 
 #include <X11/Xlib.h>
