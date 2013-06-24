@@ -13,21 +13,27 @@ class Edowser : public QWidget, public QtNPBindable {
 Q_OBJECT
 Q_CLASSINFO("MIME", "application/x-edowser:---:--")
 //Q_CLASSINFO("ToSuperClass", "Edowser")
+Q_PROPERTY(QString text READ text WRITE setText)
+Q_CLASSINFO("DefaultProperty", "text")
 public:
   Edowser(QWidget *parent = 0);
   virtual ~Edowser();
-  void show();
+  QString text() const;
 public slots:
   void mouse_press(int x, int y, int button);
   void mouse_release(int x, int y, int button);
   void dummy_resize();
+  void setText(const QString &text);
 protected:
   void resizeEvent(QResizeEvent *event);
 private:
+  void format(QString *frm_str, const QString &filename, const QString &xid);
+
   bool grabKB;
   QProcess *process;
   QX11EmbedContainer *container;
   Xmouse *xmouse;
+  QTemporaryFile *tmpfile;
 };
 
 #endif //__EDOWSER_H_
