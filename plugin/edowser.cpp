@@ -23,15 +23,19 @@ Edowser::Edowser(QWidget *parent)
   qDebug() << "XID:" << container->winId();
 
   qDebug() << "parameters:";
+  QMap<QByteArray, QVariant> html_parameters = parameters();
   QMap<QByteArray, QVariant>::const_iterator i = parameters().constBegin();
   while (i != parameters().constEnd()) {
     qDebug() << i.key() << "=" << i.value();
     ++i;
-  }
+  }                       
 
   //get a name for a temp file
   tmpfile = new QTemporaryFile(QDir::tempPath() + "/" + "edowser_XXXXXX.txt");
-  tmpfile->open(); tmpfile->close(); //it does not have a name until it's opened
+  tmpfile->open(); 
+  if (html_parameters.contains("originaltext"))
+    tmpfile->write(html_parameters["originaltext"].toString().toUtf8());
+  tmpfile->close();
 
   //start an editor that embeds itself into our widget
   //QString command("xterm  -into %x -e \"/usr/bin/vi %f\"");
@@ -67,16 +71,17 @@ QString Edowser::text() const {
   file.open(QIODevice::ReadOnly);
   QString result(file.readAll());
   file.close();
+  qDebug() << "text():" << result;
   return result;
 }
 
 void Edowser::mouse_press(int x, int y, int button) {
   if (button == 0) { //first (left) mouse button
-    xmouse->resetFocus();
+    //xmouse->resetFocus();
     
     QPoint lpoint = mapFromGlobal(QPoint(x, y));
     if (geometry().contains(lpoint)) { 
-      QApplication::setActiveWindow(this);
+      //QApplication::setActiveWindow(this);
       if (grabKB)
         container->grabKeyboard();
     } else {
@@ -108,7 +113,8 @@ void Edowser::setText(const QString &text) {
 }
 
 void Edowser::resizeEvent(QResizeEvent *event) {
-  container->setGeometry(0, 0, event->size().width(), event->size().width());
+  qDebug() << "resizeEvent()" << event->size().width() << "x" << event->size().height();
+  container->setGeometry(0, 0, event->size().width(), event->size().height());
 }
 
 void Edowser::format(QString *frm_str, const QString &filename, const QString &xid) {

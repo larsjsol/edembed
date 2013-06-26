@@ -13,7 +13,7 @@ class Edowser : public QWidget, public QtNPBindable {
 Q_OBJECT
 Q_CLASSINFO("MIME", "application/x-edowser:---:--")
 //Q_CLASSINFO("ToSuperClass", "Edowser")
-Q_PROPERTY(QString text READ text WRITE setText)
+  Q_PROPERTY(QString text READ text() WRITE setText())
 Q_CLASSINFO("DefaultProperty", "text")
 public:
   Edowser(QWidget *parent = 0);

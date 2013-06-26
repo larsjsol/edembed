@@ -1,0 +1,5 @@
+content   edowser               content/
+skin      edowser  classic/1.0  skin/
+locale    edowser  en-US        locale/en-US/
+
+overlay chrome://browser/content/browser.xul  chrome://edowser/content/browserOverlay.xul
