@@ -26,10 +26,11 @@ public slots:
   void setText(const QString &text);
 protected:
   void resizeEvent(QResizeEvent *event);
+  bool event(QEvent *event);
 private:
   void format(QString *frm_str, const QString &filename, const QString &xid);
 
-  bool grabKB;
+  bool windowActive;
   QProcess *process;
   QX11EmbedContainer *container;
   Xmouse *xmouse;

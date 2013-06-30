@@ -18,6 +18,8 @@ Edowser::Edowser(QWidget *parent)
   // connect(xmouse, SIGNAL(release(int, int, int)), this, SLOT(mouse_release(int, int, int)));
   QThreadPool::globalInstance()->start(xmouse);
 
+  windowActive = true;
+
   //create a container-widget
   container = new QX11EmbedContainer(this);
   qDebug() << "XID:" << container->winId();
@@ -42,8 +44,6 @@ Edowser::Edowser(QWidget *parent)
   QString command("emacs --parent-id %x %f");
   format(&command, tmpfile->fileName(), QString::number(container->winId()));
   qDebug() << "editor command:" << command;
-
-  grabKB = command.contains("emacs"); //our focus hack doesn't for for emacs...
                
   process = new QProcess(this);
   process->start(command);
@@ -75,23 +75,20 @@ QString Edowser::text() const {
   return result;
 }
 
+//it appears that focus is broken in qtbrowserplugin
+//we grab the keyboard on mouse clicks inside of the editor
 void Edowser::mouse_press(int x, int y, int button) {
   if (button == 0) { //first (left) mouse button
-    //xmouse->resetFocus();
-    
+
     QPoint lpoint = mapFromGlobal(QPoint(x, y));
-    if (geometry().contains(lpoint)) { 
-      //QApplication::setActiveWindow(this);
-      if (grabKB)
-        container->grabKeyboard();
+    if (geometry().contains(lpoint) && windowActive) { 
+      container->grabKeyboard();
     } else {
-      if (grabKB)
-        container->releaseKeyboard();
+      container->releaseKeyboard();
     }
   }
 }
 
-//it appears focus is broken in qtbrowserplugin, here we try to set it manualy instead
 void Edowser::mouse_release(int x, int y, int button) {
   (void)x;
   (void)y;
@@ -113,12 +110,28 @@ void Edowser::setText(const QString &text) {
 }
 
 void Edowser::resizeEvent(QResizeEvent *event) {
-  qDebug() << "resizeEvent()" << event->size().width() << "x" << event->size().height();
+  //qDebug() << "resizeEvent()" << event->size().width() << "x" << event->size().height();
   container->setGeometry(0, 0, event->size().width(), event->size().height());
 }
 
+bool Edowser::event(QEvent *event) {
+  //qDebug() << "event():" << event;
+  switch (event->type()) {
+  case QEvent::WindowActivate:
+    windowActive = true;
+    return true;
+  case QEvent::WindowDeactivate:
+    windowActive = false;
+    container->releaseKeyboard();
+    return true;
+  default:
+    return QWidget::event(event);
+    
+  }
+}
+
+
 void Edowser::format(QString *frm_str, const QString &filename, const QString &xid) {
-  frm_str->replace("%%", "%");
   frm_str->replace("%f", filename);
   frm_str->replace("%x", xid);
 }
