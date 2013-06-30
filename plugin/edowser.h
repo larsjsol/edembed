@@ -35,6 +35,7 @@ private:
   QX11EmbedContainer *container;
   Xmouse *xmouse;
   QTemporaryFile *tmpfile;
+
 };
 
 #endif //__EDOWSER_H_

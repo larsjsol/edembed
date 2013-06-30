@@ -4,19 +4,17 @@
 #include <QApplication>
 #include <QDebug>
 #include <QX11EmbedContainer>
-#include <QThreadPool>
 #include <QTimer>
 #include <QTemporaryFile>
 
 
 Edowser::Edowser(QWidget *parent)
   : QWidget(parent), QtNPBindable() {
+  qDebug() << "PID:" << QCoreApplication::applicationPid();
 
   //we cant get focus the normal way, so we use manymouse/xlib to get mousevents
-  xmouse = new Xmouse();
+  xmouse = Xmouse::subscribe();
   connect(xmouse, SIGNAL(press(int, int, int)), this, SLOT(mouse_press(int, int, int)));
-  // connect(xmouse, SIGNAL(release(int, int, int)), this, SLOT(mouse_release(int, int, int)));
-  QThreadPool::globalInstance()->start(xmouse);
 
   windowActive = true;
 
@@ -57,13 +55,13 @@ Edowser::Edowser(QWidget *parent)
 }
 
 Edowser::~Edowser(){
-  xmouse->quit(); //xmouse is deleted by QTreadPool
-  QThreadPool::globalInstance()->waitForDone();
+  xmouse->unsubscribe(); //xmouse deletes itself
   process->terminate();
   process->waitForFinished();
   delete container;
   delete process;
   delete tmpfile;
+
 }
 
 QString Edowser::text() const {

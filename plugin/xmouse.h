@@ -1,8 +1,11 @@
 #ifndef __XMOUSE_H_
 #define __XMOUSE_H_
 
+#include <QThreadPool>
 #include <QObject>
 #include <QRunnable>
+#include <QDebug>
+#include <QMutex> 
 
 #include <X11/Xlib.h>
 #include "manymouse.h"
@@ -14,22 +17,24 @@ class Xmouse : public QObject, public QRunnable
 {
   Q_OBJECT
   public:
-  Xmouse(QObject *parent = 0);
-  void quit();
+  static Xmouse* subscribe();
+  static void unsubscribe();
   void resetFocus();
-  virtual ~Xmouse();
 protected:
   void run();
 signals:
   void press(int x, int y, int button);
   void release(int x, int y, int button);
 private:
-  XEvent xevent;
+  Xmouse(QObject *parent = 0);
+  virtual ~Xmouse();
 
+  static Xmouse *instance;
+  static int no_subscribers;
+
+  XEvent xevent;
   Display *display;
   Window window;
-
-  bool done;
 };
 
 #endif // __XMOUSE_H_
