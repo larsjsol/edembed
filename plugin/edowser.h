@@ -14,7 +14,7 @@ Q_OBJECT
 Q_CLASSINFO("MIME", "application/x-edowser:---:--")
 //Q_CLASSINFO("ToSuperClass", "Edowser")
   Q_PROPERTY(QString text READ text WRITE setText)
-Q_CLASSINFO("DefaultProperty", "text")
+  Q_CLASSINFO("DefaultProperty", "text")
 public:
   Edowser(QWidget *parent = 0);
   virtual ~Edowser();
@@ -24,13 +24,16 @@ public slots:
   void mouse_release(int x, int y, int button);
   void dummy_resize();
   void setText(const QString &text);
+  void pageFocus();
+  void pageBlur();
 protected:
   void resizeEvent(QResizeEvent *event);
   bool event(QEvent *event);
 private:
   void format(QString *frm_str, const QString &filename, const QString &xid);
-
-  bool windowActive;
+  
+  bool tabVisible; //are we in a visible tab
+  bool windowActive; //is the browser window active
   QProcess *process;
   QX11EmbedContainer *container;
   Xmouse *xmouse;

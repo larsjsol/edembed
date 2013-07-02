@@ -41,8 +41,32 @@ XULEdowserChrome.BrowserOverlay = {
 
     onPageLoad: function(aEvent) {
         var page = aEvent.originalTarget; // doc is document that triggered the event
+        page.addEventListener("focus", XULEdowserChrome.BrowserOverlay.focus);
+        page.addEventListener("blur", XULEdowserChrome.BrowserOverlay.blur);
+
         XULEdowserChrome.BrowserOverlay.replaceTextareas(page);
+    },
+
+    focus: function(aEvent) {
+        var page = aEvent.originalTarget;
+        //alert(page);
+        var objects = page.getElementsByTagName('object');
+        for (var i = 0; i < objects.length; i++) {
+            var edowser = XPCNativeWrapper.unwrap(objects.item(i));
+            edowser.pageFocus();
+        }
+    },
+
+    blur: function(aEvent) {
+        var page = aEvent.originalTarget;
+        //alert(page);
+        var objects = page.getElementsByTagName('object');
+        for (var i = 0; i < objects.length; i++) {
+            var edowser = XPCNativeWrapper.unwrap(objects.item(i));
+            edowser.pageBlur();
+        }
     }
+
     
 };
 

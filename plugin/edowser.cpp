@@ -17,6 +17,7 @@ Edowser::Edowser(QWidget *parent)
   connect(xmouse, SIGNAL(press(int, int, int)), this, SLOT(mouse_press(int, int, int)));
 
   windowActive = true;
+  tabVisible = true;
 
   //create a container-widget
   container = new QX11EmbedContainer(this);
@@ -69,7 +70,6 @@ QString Edowser::text() const {
   file.open(QIODevice::ReadOnly);
   QString result(file.readAll());
   file.close();
-  qDebug() << "text():" << result;
   return result;
 }
 
@@ -79,7 +79,7 @@ void Edowser::mouse_press(int x, int y, int button) {
   if (button == 0) { //first (left) mouse button
 
     QPoint lpoint = mapFromGlobal(QPoint(x, y));
-    if (geometry().contains(lpoint) && windowActive) { 
+    if (geometry().contains(lpoint) && windowActive && tabVisible) { 
       container->grabKeyboard();
     } else {
       container->releaseKeyboard();
@@ -105,6 +105,15 @@ void Edowser::setText(const QString &text) {
   file.open(QIODevice::WriteOnly);
   file.write(text.toUtf8()); // um...
   file.close();
+}
+
+void Edowser::pageFocus() {
+  tabVisible = true;
+}
+
+void Edowser::pageBlur() {
+  tabVisible = false;
+  container->releaseKeyboard();
 }
 
 void Edowser::resizeEvent(QResizeEvent *event) {
