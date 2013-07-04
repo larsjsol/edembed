@@ -41,6 +41,7 @@ Edowser::Edowser(QWidget *parent)
   //start an editor that embeds itself into our widget
   //QString command("xterm  -into %x -e \"/usr/bin/vi %f\"");
   QString command("emacs --parent-id %x %f");
+  //QString command("gvim --socketid %x %f");
   format(&command, tmpfile->fileName(), QString::number(container->winId()));
   qDebug() << "editor command:" << command;
                
@@ -49,10 +50,9 @@ Edowser::Edowser(QWidget *parent)
   qDebug() << "editor PID:" << process->pid();
   process->waitForStarted();
 
-  //emacs ignores resizeevents until after it is done initializing 
-  QTimer::singleShot(1000, this, SLOT(dummy_resize()));
-  QTimer::singleShot(5000, this, SLOT(dummy_resize()));
-  QTimer::singleShot(10000, this, SLOT(dummy_resize()));
+  //emacs ignores resizeevents until after it is done initializing
+  for (int i = 1000; i <= 10000; i+= 1000)
+    QTimer::singleShot(i, this, SLOT(dummy_resize()));
 }
 
 Edowser::~Edowser(){
@@ -79,7 +79,7 @@ void Edowser::mouse_press(int x, int y, int button) {
   if (button == 0) { //first (left) mouse button
 
     QPoint lpoint = mapFromGlobal(QPoint(x, y));
-    if (geometry().contains(lpoint) && windowActive && tabVisible) { 
+    if (geometry().contains(lpoint) && windowActive && tabVisible) {
       container->grabKeyboard();
     } else {
       container->releaseKeyboard();
