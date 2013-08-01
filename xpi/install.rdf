@@ -6,7 +6,7 @@
   <Description about="urn:mozilla:install-manifest">
     <em:id>{24b664f3-f3f8-4ff2-943e-5e64e08f07ad}</em:id>
     <em:name>Edowser</em:name>
-    <em:description>Edit online text with prober editors</em:description>
+    <em:description>Edit online text with proper editors</em:description>
     <em:version>0.1</em:version>
     <em:creator>Lars Jørgen Solberg</em:creator>
     <em:homepageURL>https://github.com/larsjsol/edowser</em:homepageURL>
