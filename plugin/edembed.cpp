@@ -39,7 +39,7 @@ Edembed::Edembed(QWidget *parent)
   tmpfile = new QTemporaryFile(QDir::tempPath() + "/" + "edembed_XXXXXX.txt");
   tmpfile->open(); 
   if (html_parameters.contains("originaltext"))
-    tmpfile->write(html_parameters["originaltext"].toString().toUtf8());
+    tmpfile->write(html_parameters["originaltext"].toByteArray());
   tmpfile->close();
 
   //first figure out which command we should run
@@ -78,7 +78,10 @@ Edembed::~Edembed(){
 QString Edembed::text() const {
   QFile file(tmpfile->fileName());
   file.open(QIODevice::ReadOnly);
-  QString result(file.readAll());
+  QTextStream stream(&file);
+  stream.setCodec("UTF-8");
+  QString result = stream.readAll();
+  qDebug() << "result:" << result;
   file.close();
   return result;
 }
@@ -113,7 +116,7 @@ void Edembed::dummy_resize() {
 void Edembed::setText(const QString &text) {
   QFile file(tmpfile->fileName());
   file.open(QIODevice::WriteOnly);
-  file.write(text.toUtf8()); // um...
+  file.write(text.toUtf8());
   file.close();
 }
 
