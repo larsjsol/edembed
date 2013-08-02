@@ -5,7 +5,7 @@ Edembed is a firefox extension that lets you use an editor to edit `<textarea>`s
 ## Installation
 1. Download the [extension](http://projects.met.no/~larsjs/edembed.xpi) (or compile it yourself, see below for instructions).
 2. Set your preferred [XEMBED](http://standards.freedesktop.org/xembed-spec/xembed-spec-latest.html)-capable editor by changing the value of the command-key in $HOME/.config/edembed/edembed.conf. 
-
+3. Remember to save the file before you press submit.
 
 The default config file looks like this:
 ```
