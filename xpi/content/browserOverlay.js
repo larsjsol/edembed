@@ -17,6 +17,7 @@ XULEdowserChrome.BrowserOverlay = {
             var edowserNode = XULEdowserChrome.BrowserOverlay.pluginNode(page, textNode);
             parent.insertBefore(edowserNode, textNode);
             textNode.hidden = true; 
+            textNode.style.display = "none";
             textNode.form.addEventListener("submit", function(){textNode.value = edowserNode.text;});
         }
     },
