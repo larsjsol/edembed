@@ -1,24 +1,24 @@
 window.addEventListener("load", function load(event){
     window.removeEventListener("load", load, false); //remove listener, no longer needed
-    XULEdowserChrome.BrowserOverlay.init();  
+    XULEdembedChrome.BrowserOverlay.init();  
 },false);
 
-if ("undefined" == typeof(XULEdowserChrome)) {
-  var XULEdowserChrome = {};
+if ("undefined" == typeof(XULEdembedChrome)) {
+  var XULEdembedChrome = {};
 };
 
 
-XULEdowserChrome.BrowserOverlay = {
+XULEdembedChrome.BrowserOverlay = {
     replaceTextareas: function (page) {        
         var textareas = page.getElementsByTagName('textarea');
         for (var i = 0; i < textareas.length; i++) {
             var textNode = textareas.item(i);
             var parent = textNode.parentNode;
-            var edowserNode = XULEdowserChrome.BrowserOverlay.pluginNode(page, textNode);
-            parent.insertBefore(edowserNode, textNode);
+            var edembedNode = XULEdembedChrome.BrowserOverlay.pluginNode(page, textNode);
+            parent.insertBefore(edembedNode, textNode);
             textNode.hidden = true; 
             textNode.style.display = "none";
-            textNode.form.addEventListener("submit", function(){textNode.value = edowserNode.text;});
+            textNode.form.addEventListener("submit", function(){textNode.value = edembedNode.text;});
         }
     },
     
@@ -26,11 +26,11 @@ XULEdowserChrome.BrowserOverlay = {
         var node = page.createElement('object');
         for (var j = 0; j < textarea.attributes.length; j++)
             node.setAttribute(textarea.attributes.item(j).name, textarea.attributes.item(j).value);
-        node.type = "application/x-edowser";
+        node.type = "application/x-edembed";
         node.height = textarea.clientHeight;
         node.width = textarea.clientWidth;
-        node.name = "edowser_" + textarea.name;
-        node.id = "edowser_" + textarea.id;
+        node.name = "edembed_" + textarea.name;
+        node.id = "edembed_" + textarea.id;
         node.setAttribute("originalText", textarea.value);
         return XPCNativeWrapper.unwrap(node);
     }, 
@@ -42,10 +42,10 @@ XULEdowserChrome.BrowserOverlay = {
 
     onPageLoad: function(aEvent) {
         var page = aEvent.originalTarget; // doc is document that triggered the event
-        page.addEventListener("focus", XULEdowserChrome.BrowserOverlay.focus);
-        page.addEventListener("blur", XULEdowserChrome.BrowserOverlay.blur);
+        page.addEventListener("focus", XULEdembedChrome.BrowserOverlay.focus);
+        page.addEventListener("blur", XULEdembedChrome.BrowserOverlay.blur);
 
-        XULEdowserChrome.BrowserOverlay.replaceTextareas(page);
+        XULEdembedChrome.BrowserOverlay.replaceTextareas(page);
     },
 
     focus: function(aEvent) {
@@ -53,8 +53,8 @@ XULEdowserChrome.BrowserOverlay = {
         //alert(page);
         var objects = page.getElementsByTagName('object');
         for (var i = 0; i < objects.length; i++) {
-            var edowser = XPCNativeWrapper.unwrap(objects.item(i));
-            edowser.pageFocus();
+            var edembed = XPCNativeWrapper.unwrap(objects.item(i));
+            edembed.pageFocus();
         }
     },
 
@@ -63,8 +63,8 @@ XULEdowserChrome.BrowserOverlay = {
         //alert(page);
         var objects = page.getElementsByTagName('object');
         for (var i = 0; i < objects.length; i++) {
-            var edowser = XPCNativeWrapper.unwrap(objects.item(i));
-            edowser.pageBlur();
+            var edembed = XPCNativeWrapper.unwrap(objects.item(i));
+            edembed.pageBlur();
         }
     }
 

@@ -1,5 +1,5 @@
-#ifndef __EDOWSER_H_
-#define __EDOWSER_H_
+#ifndef EDEMBED_H
+#define EDEMBED_H
 
 #include <QtGui>
 #include <QWidget>
@@ -9,15 +9,15 @@
 
 #include "xmouse.h"
 
-class Edowser : public QWidget, public QtNPBindable {
+class Edembed : public QWidget, public QtNPBindable {
 Q_OBJECT
-Q_CLASSINFO("MIME", "application/x-edowser:---:--")
-//Q_CLASSINFO("ToSuperClass", "Edowser")
+Q_CLASSINFO("MIME", "application/x-edembed:---:--")
+//Q_CLASSINFO("ToSuperClass", "Edembed")
   Q_PROPERTY(QString text READ text WRITE setText)
   Q_CLASSINFO("DefaultProperty", "text")
 public:
-  Edowser(QWidget *parent = 0);
-  virtual ~Edowser();
+  Edembed(QWidget *parent = 0);
+  virtual ~Edembed();
   QString text() const;
 public slots:
   void mouse_press(int x, int y, int button);
@@ -41,4 +41,4 @@ private:
 
 };
 
-#endif //__EDOWSER_H_
+#endif // EDEMBED_H

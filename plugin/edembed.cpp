@@ -1,4 +1,4 @@
-#include "edowser.h"
+#include "edembed.h"
 #include "xmouse.h"
 
 #include <QApplication>
@@ -9,10 +9,10 @@
 #include <QSettings>
 
 
-Edowser::Edowser(QWidget *parent)
+Edembed::Edembed(QWidget *parent)
   : QWidget(parent), QtNPBindable() {
-  QCoreApplication::setOrganizationName("edowser"); // um...
-  QCoreApplication::setApplicationName("edowser");
+  QCoreApplication::setOrganizationName("edembed"); // um...
+  QCoreApplication::setApplicationName("edembed");
 
   qDebug() << "PID:" << QCoreApplication::applicationPid();
 
@@ -36,7 +36,7 @@ Edowser::Edowser(QWidget *parent)
   }                       
 
   //get a name for a temp file
-  tmpfile = new QTemporaryFile(QDir::tempPath() + "/" + "edowser_XXXXXX.txt");
+  tmpfile = new QTemporaryFile(QDir::tempPath() + "/" + "edembed_XXXXXX.txt");
   tmpfile->open(); 
   if (html_parameters.contains("originaltext"))
     tmpfile->write(html_parameters["originaltext"].toString().toUtf8());
@@ -65,7 +65,7 @@ Edowser::Edowser(QWidget *parent)
     QTimer::singleShot(i, this, SLOT(dummy_resize()));
 }
 
-Edowser::~Edowser(){
+Edembed::~Edembed(){
   xmouse->unsubscribe(); //xmouse deletes itself
   process->terminate();
   process->waitForFinished();
@@ -75,7 +75,7 @@ Edowser::~Edowser(){
 
 }
 
-QString Edowser::text() const {
+QString Edembed::text() const {
   QFile file(tmpfile->fileName());
   file.open(QIODevice::ReadOnly);
   QString result(file.readAll());
@@ -85,7 +85,7 @@ QString Edowser::text() const {
 
 //it appears that focus is broken in qtbrowserplugin
 //we grab the keyboard on mouse clicks inside of the editor
-void Edowser::mouse_press(int x, int y, int button) {
+void Edembed::mouse_press(int x, int y, int button) {
   if (button == 0) { //first (left) mouse button
 
     QPoint lpoint = mapFromGlobal(QPoint(x, y));
@@ -97,41 +97,41 @@ void Edowser::mouse_press(int x, int y, int button) {
   }
 }
 
-void Edowser::mouse_release(int x, int y, int button) {
+void Edembed::mouse_release(int x, int y, int button) {
   (void)x;
   (void)y;
   (void)button;
 }
 
-void Edowser::dummy_resize() {
+void Edembed::dummy_resize() {
   int w = width();
   int h = height();
   resize(w + 1, h);
   resize(w, h);
 }
 
-void Edowser::setText(const QString &text) {
+void Edembed::setText(const QString &text) {
   QFile file(tmpfile->fileName());
   file.open(QIODevice::WriteOnly);
   file.write(text.toUtf8()); // um...
   file.close();
 }
 
-void Edowser::pageFocus() {
+void Edembed::pageFocus() {
   tabVisible = true;
 }
 
-void Edowser::pageBlur() {
+void Edembed::pageBlur() {
   tabVisible = false;
   container->releaseKeyboard();
 }
 
-void Edowser::resizeEvent(QResizeEvent *event) {
+void Edembed::resizeEvent(QResizeEvent *event) {
   //qDebug() << "resizeEvent()" << event->size().width() << "x" << event->size().height();
   container->setGeometry(0, 0, event->size().width(), event->size().height());
 }
 
-bool Edowser::event(QEvent *event) {
+bool Edembed::event(QEvent *event) {
   //qDebug() << "event():" << event;
   switch (event->type()) {
   case QEvent::WindowActivate:
@@ -148,7 +148,7 @@ bool Edowser::event(QEvent *event) {
 }
 
 
-void Edowser::format(QString *frm_str, const QString &filename, const QString &xid) {
+void Edembed::format(QString *frm_str, const QString &filename, const QString &xid) {
   frm_str->replace("%f", filename);
   frm_str->replace("%x", xid);
 }
@@ -157,9 +157,9 @@ void Edowser::format(QString *frm_str, const QString &filename, const QString &x
 int main(int argc, char *argv[]){
   QApplication app(argc, argv);
 
-  Edowser *e = new Edowser();
+  Edembed *e = new Edembed();
   e->resize(500, 300);
-  e->setWindowTitle("Edowser");
+  e->setWindowTitle("Edembed");
   e->show();
 
   int retval = app.exec();
@@ -168,6 +168,6 @@ int main(int argc, char *argv[]){
   return retval;
 }
 
-QTNPFACTORY_BEGIN("Edowser", "A plugin that lets you edit textareas with a proper editor.")
-QTNPCLASS(Edowser)
+QTNPFACTORY_BEGIN("Edembed", "A plugin that lets you edit textareas with a proper editor.")
+QTNPCLASS(Edembed)
 QTNPFACTORY_END()

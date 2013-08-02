@@ -3,15 +3,15 @@
 ######################################################################
 
 #TEMPLATE = app
-TARGET = edowser
+TARGET = edembed
 DEPENDPATH += .
 INCLUDEPATH += .
 INCLUDEPATH += ../manymouse
 LIBS += -lX11 -lXi
 
 # Input
-HEADERS += edowser.h xmouse.h 
-SOURCES += edowser.cpp xmouse.cpp
+HEADERS += edembed.h xmouse.h 
+SOURCES += edembed.cpp xmouse.cpp
 
 # manymouse
 HEADERS += ../manymouse/*.h 
