@@ -49,10 +49,6 @@ Edembed::Edembed(QWidget *parent)
   QString command = settings.value("command").toString();
   format(&command, tmpfile->fileName(), QString::number(container->winId()));
   qDebug() << "editor command:" << command;
-                
-  //QString command("xterm  -into %x -e \"/usr/bin/vi %f\"");
-  //QString command("emacs --parent-id %x %f");
-  //QString command("gvim --socketid %x %f");
   
   //start an editor that embeds itself into our widget
   process = new QProcess(this);
