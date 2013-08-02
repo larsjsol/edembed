@@ -6,10 +6,14 @@
 #include <QX11EmbedContainer>
 #include <QTimer>
 #include <QTemporaryFile>
+#include <QSettings>
 
 
 Edowser::Edowser(QWidget *parent)
   : QWidget(parent), QtNPBindable() {
+  QCoreApplication::setOrganizationName("edowser"); // um...
+  QCoreApplication::setApplicationName("edowser");
+
   qDebug() << "PID:" << QCoreApplication::applicationPid();
 
   //we cant get focus the normal way, so we use manymouse/xlib to get mousevents
@@ -38,13 +42,19 @@ Edowser::Edowser(QWidget *parent)
     tmpfile->write(html_parameters["originaltext"].toString().toUtf8());
   tmpfile->close();
 
-  //start an editor that embeds itself into our widget
-  //QString command("xterm  -into %x -e \"/usr/bin/vi %f\"");
-  QString command("emacs --parent-id %x %f");
-  //QString command("gvim --socketid %x %f");
+  //first figure out which command we should run
+  QSettings settings;
+  if (!settings.contains("command"))
+    settings.setValue("command", "emacs --parent-id %x %f");
+  QString command = settings.value("command").toString();
   format(&command, tmpfile->fileName(), QString::number(container->winId()));
   qDebug() << "editor command:" << command;
-               
+                
+  //QString command("xterm  -into %x -e \"/usr/bin/vi %f\"");
+  //QString command("emacs --parent-id %x %f");
+  //QString command("gvim --socketid %x %f");
+  
+  //start an editor that embeds itself into our widget
   process = new QProcess(this);
   process->start(command);
   qDebug() << "editor PID:" << process->pid();
