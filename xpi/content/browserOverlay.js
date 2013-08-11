@@ -1,6 +1,6 @@
 window.addEventListener("load", function load(event){
     window.removeEventListener("load", load, false); //remove listener, no longer needed
-    XULEdembedChrome.BrowserOverlay.init();  
+    XULEdembedChrome.BrowserOverlay.init();
 },false);
 
 if ("undefined" == typeof(XULEdembedChrome)) {
@@ -9,19 +9,21 @@ if ("undefined" == typeof(XULEdembedChrome)) {
 
 
 XULEdembedChrome.BrowserOverlay = {
-    replaceTextareas: function (page) {        
+    edembed_enabled: true, 
+
+    replaceTextareas: function (page) {
         var textareas = page.getElementsByTagName('textarea');
         for (var i = 0; i < textareas.length; i++) {
             var textNode = textareas.item(i);
             var parent = textNode.parentNode;
             var edembedNode = XULEdembedChrome.BrowserOverlay.pluginNode(page, textNode);
             parent.insertBefore(edembedNode, textNode);
-            textNode.hidden = true; 
+            textNode.hidden = true;
             textNode.style.display = "none";
             textNode.form.addEventListener("submit", function(){textNode.value = edembedNode.text;});
         }
     },
-    
+
     pluginNode: function(page, textarea) {
         var node = page.createElement('object');
         for (var j = 0; j < textarea.attributes.length; j++)
@@ -33,19 +35,33 @@ XULEdembedChrome.BrowserOverlay = {
         node.id = "edembed_" + textarea.id;
         node.setAttribute("originalText", textarea.value);
         return XPCNativeWrapper.unwrap(node);
-    }, 
+    },
 
     init: function() {
         // The event can be DOMContentLoaded, pageshow, pagehide, load or unload.
-        if(gBrowser) gBrowser.addEventListener("DOMContentLoaded", this.onPageLoad, false);
+        if(gBrowser) 
+            gBrowser.addEventListener("DOMContentLoaded", this.onPageLoad, false);
+
+        var firstRun = "extensions.edembed.firstRun";
+        if (Application.prefs.getValue(firstRun, false)) {
+            Application.prefs.setValue(firstRun, false);
+            
+            // enable the addon-bar in order to show the "toggle-button" 
+            // this is kind of rude, so we only do this once
+            var addonbar = document.getElementById("addon-bar");
+            addonbar.setAttribute("collapsed", false);
+            document.persist(addonbar.id, "collapsed");
+        }
     },
 
     onPageLoad: function(aEvent) {
-        var page = aEvent.originalTarget; // doc is document that triggered the event
-        page.addEventListener("focus", XULEdembedChrome.BrowserOverlay.focus);
-        page.addEventListener("blur", XULEdembedChrome.BrowserOverlay.blur);
+        if (XULEdembedChrome.BrowserOverlay.edembed_enabled === true) {
+            var page = aEvent.originalTarget; // doc is document that triggered the event
+            page.addEventListener("focus", XULEdembedChrome.BrowserOverlay.focus);
+            page.addEventListener("blur", XULEdembedChrome.BrowserOverlay.blur);
 
-        XULEdembedChrome.BrowserOverlay.replaceTextareas(page);
+            XULEdembedChrome.BrowserOverlay.replaceTextareas(page);
+        }
     },
 
     focus: function(aEvent) {
@@ -66,8 +82,17 @@ XULEdembedChrome.BrowserOverlay = {
             var edembed = XPCNativeWrapper.unwrap(objects.item(i));
             edembed.pageBlur();
         }
+    },
+
+    toggle: function(aEvent) {
+        XULEdembedChrome.BrowserOverlay.edembed_enabled = !XULEdembedChrome.BrowserOverlay.edembed_enabled;
+
+        var button = document.getElementById("edembed-toggle");
+        if (XULEdembedChrome.BrowserOverlay.edembed_enabled === true) {
+            button.image = "chrome://edembed/content/enabled.png";
+        } else {
+            button.image = "chrome://edembed/content/disabled.png";
+        }
     }
 
-    
 };
-

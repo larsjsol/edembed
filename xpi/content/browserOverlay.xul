@@ -8,4 +8,14 @@
 
   <script type="application/x-javascript"
     src="chrome://edembed/content/browserOverlay.js" />
+
+  <toolbar id="addon-bar">
+    <toolbarbutton 
+        id="edembed-toggle"
+        class="edembed-toggle"
+        oncommand="XULEdembedChrome.BrowserOverlay.toggle(event)" 
+        label="edembed-toggle" 
+        image="chrome://edembed/content/enabled.png" 
+        tooltiptext="disable or enable edembed" />
+  </toolbar>
 </overlay>
