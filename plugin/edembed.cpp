@@ -3,10 +3,7 @@
 
 #include <QApplication>
 #include <QDebug>
-#include <QX11EmbedContainer>
 #include <QTimer>
-#include <QTemporaryFile>
-#include <QSettings>
 
 
 Edembed::Edembed(QWidget *parent)
@@ -35,15 +32,14 @@ Edembed::Edembed(QWidget *parent)
     ++i;
   }                       
 
-  //get a name for a temp file
-  tmpfile = new QTemporaryFile(QDir::tempPath() + "/" + "edembed_XXXXXX.txt");
-  tmpfile->open(); 
-  if (html_parameters.contains("originaltext"))
-    tmpfile->write(html_parameters["originaltext"].toByteArray());
-  tmpfile->close();
+
+  if (html_parameters.contains("originaltext") && html_parameters.contains("id")) 
+    tmpfile = getTempFile(html_parameters["id"].toByteArray(),
+                          html_parameters["originaltext"].toByteArray());
+  else
+    tmpfile = getTempFile("", "");
 
   //first figure out which command we should run
-  QSettings settings;
   if (!settings.contains("command"))
     settings.setValue("command", "emacs --parent-id %x %f");
   QString command = settings.value("command").toString();
@@ -152,6 +148,25 @@ void Edembed::format(QString *frm_str, const QString &filename, const QString &x
   frm_str->replace("%x", xid);
 }
 
+QTemporaryFile* Edembed::getTempFile(const QByteArray &textarea_id, const QByteArray &originaltext) {
+  //first add some default values if the section "[suffixes]" does not exist
+  if (!settings.childGroups().contains("suffixes")) {
+    settings.setValue("suffixes/wiki__text", ".dokuwiki");
+    settings.setValue("suffixes/wpTextbox1", ".mediawiki");
+  }
+  
+  QString id = QString(textarea_id).replace("edembed_", "");
+  settings.beginGroup("suffixes");
+  QString suffix = settings.value(id, ".txt").toString();
+  settings.endGroup();
+
+  QTemporaryFile *tmp = new QTemporaryFile(QDir::tempPath() + "/" + "edembed_XXXXXX" + suffix);
+  tmp->open();
+    tmp->write(originaltext);
+  tmp->close();
+  
+  return tmp;
+}
 
 int main(int argc, char *argv[]){
   QApplication app(argc, argv);
@@ -170,3 +185,5 @@ int main(int argc, char *argv[]){
 QTNPFACTORY_BEGIN("Edembed", "A plugin that lets you edit textareas with a proper editor.")
 QTNPCLASS(Edembed)
 QTNPFACTORY_END()
+
+
