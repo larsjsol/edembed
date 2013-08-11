@@ -2,20 +2,6 @@ edembed
 =======
 Edembed is a firefox extension that lets you use an editor to edit `<textarea>`s. 
 
-## Installation
-1. Download the [extension](http://projects.met.no/~larsjs/edembed.xpi) (or compile it yourself, see below for instructions).
-2. Set your preferred [XEMBED](http://standards.freedesktop.org/xembed-spec/xembed-spec-latest.html)-capable editor by changing the value of the command-key in $HOME/.config/edembed/edembed.conf. 
-3. Remember to save the file before you press submit.
-
-The default config file looks like this:
-```
-[General]
-command=emacs --parent-id %x %f
-```
-Where %x represents the id of the window the editor should use and %f the name of a temporary file.
-
-Try using `command=gvim --socketid %x %f` or `command=xterm -into %x -e "/usr/bin/your_favorite_editor %f"`.
-
 ## Compiling from source
 Make sure you have the following installed:
 
@@ -30,6 +16,22 @@ git clone https://github.com/larsjsol/edembed.git
 cd edembed
 make
 ```
+
+## Installation
+1. In Firefox: Open the Add-ons Manager by choosing "Add-ons" from the Tools menu
+2. Click the wrench,  choose "Install Add-on From File..." and find edembed.xpi
+3. Set your preferred [XEMBED](http://standards.freedesktop.org/xembed-spec/xembed-spec-latest.html)-capable editor by changing the value of the command-key in $HOME/.config/edembed/edembed.conf. 
+4. Remember to save the file before you press submit.
+
+The default config file looks like this:
+```
+[General]
+command=emacs --parent-id %x %f
+```
+Where %x represents the id of the window the editor will embed itself in and %f the name of a temporary file.
+
+Try using `command=gvim --socketid %x %f` or `command=xterm -into %x -e "/usr/bin/your_favorite_editor %f"`.
+
 
 ## TODO
 * add site-specific file-endings which will help editors do syntax-highlighting
