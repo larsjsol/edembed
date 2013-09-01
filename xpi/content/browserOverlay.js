@@ -85,7 +85,7 @@ XULEdembedChrome.BrowserOverlay = {
             page.addEventListener("focus", XULEdembedChrome.BrowserOverlay.focus);
             page.addEventListener("blur", XULEdembedChrome.BrowserOverlay.blur);
 
-            XULEdembedChrome.BrowserOverlay.replaceTextareas(page);
+            XULEdembedChrome.BrowserOverlay.replaceTextareas();
         }
     },
 
