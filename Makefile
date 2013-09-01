@@ -2,7 +2,7 @@ SHELL = /bin/bash
 
 all: edembed.xpi
 
-edembed.xpi: $(wildcard xpi/*) xpi/plugins/libedembed.so
+edembed.xpi: $(wildcard xpi/*) $(wildcard xpi/content/*) xpi/plugins/libedembed.so
 	cd xpi; zip edembed $$(/usr/bin/find .)
 	mv xpi/edembed.zip edembed.xpi
 
