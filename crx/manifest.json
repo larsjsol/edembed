@@ -1,0 +1,31 @@
+{
+    "manifest_version": 2,
+    
+    "name": "Edembed",
+    "description": "Edit online text with proper editors",
+    "version": "0.1",
+
+    "permissions": ["plugins", "tabs", "<all_urls>"],
+
+    "plugins": [
+        { 
+            "path": "libedembed.so",  
+            "public": true
+        }
+    ],
+
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["edembed.js"]
+        }
+    ],
+
+    "browser_action": {
+        "default_icon": "enabled.png",
+        "default_title": "Toggle Edembed"
+    },
+    
+    "background": { "scripts": ["background.js"] }
+            
+}

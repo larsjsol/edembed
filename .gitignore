@@ -6,3 +6,5 @@ moc_*
 *.so
 *.xpi
 *.zip
+*.crx
+*.pem
