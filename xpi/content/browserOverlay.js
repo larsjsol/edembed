@@ -11,21 +11,45 @@ if ("undefined" == typeof(XULEdembedChrome)) {
 XULEdembedChrome.BrowserOverlay = {
     edembed_enabled: true, 
 
-    replaceTextareas: function (page) {
-        var textareas = page.getElementsByTagName('textarea');
+    replaceTextareas: function () {
+        var textareas = content.document.getElementsByTagName('textarea');
         for (var i = 0; i < textareas.length; i++) {
             var textNode = textareas.item(i);
             var parent = textNode.parentNode;
-            var edembedNode = XULEdembedChrome.BrowserOverlay.pluginNode(page, textNode);
+            var edembedNode = XULEdembedChrome.BrowserOverlay.pluginNode(textNode);
             parent.insertBefore(edembedNode, textNode);
-            textNode.hidden = true;
+
+            // so we have a way of restoring their original state
+            textNode.edembed_hidden_bak = textNode.hidden;
+            textNode.edembed_display_bak = textNode.style.display;
+
+            // hide it
+            textNode.hidden = "true";
             textNode.style.display = "none";
             textNode.form.addEventListener("submit", function(){textNode.value = edembedNode.text;});
         }
     },
 
-    pluginNode: function(page, textarea) {
-        var node = page.createElement('object');
+    restoreTextareas: function () {
+        var textareas = content.document.getElementsByTagName('textarea');
+        for (var i = 0; i < textareas.length; i++) {
+            var textNode = textareas.item(i);
+            textNode.hidden = textNode.edembed_hidden_bak;
+            textNode.style.display = textNode.edembed_display_bak;
+            textNode.form.removeEventListener("submit", function(){textNode.value = edembedNode.text;}); // FIXME maybe
+        }
+
+        var objects = content.document.getElementsByTagName('object');
+        for (var i = 0; i < objects.length; i++) {
+            var objectNode = objects.item(i);
+            if (objectNode.type === "application/x-edembed") {
+                objectNode.parentNode.removeChild(objectNode);
+            }
+        }
+    },
+
+    pluginNode: function(textarea) {
+        var node = content.document.createElement('object');
         for (var j = 0; j < textarea.attributes.length; j++)
             node.setAttribute(textarea.attributes.item(j).name, textarea.attributes.item(j).value);
         node.type = "application/x-edembed";
@@ -56,7 +80,8 @@ XULEdembedChrome.BrowserOverlay = {
 
     onPageLoad: function(aEvent) {
         if (XULEdembedChrome.BrowserOverlay.edembed_enabled === true) {
-            var page = aEvent.originalTarget; // doc is document that triggered the event
+            var page = aEvent.originalTarget;
+            // ugly workaround for a kb-focus issue
             page.addEventListener("focus", XULEdembedChrome.BrowserOverlay.focus);
             page.addEventListener("blur", XULEdembedChrome.BrowserOverlay.blur);
 
@@ -66,7 +91,6 @@ XULEdembedChrome.BrowserOverlay = {
 
     focus: function(aEvent) {
         var page = aEvent.originalTarget;
-        //alert(page);
         var objects = page.getElementsByTagName('object');
         for (var i = 0; i < objects.length; i++) {
             var edembed = XPCNativeWrapper.unwrap(objects.item(i));
@@ -76,7 +100,6 @@ XULEdembedChrome.BrowserOverlay = {
 
     blur: function(aEvent) {
         var page = aEvent.originalTarget;
-        //alert(page);
         var objects = page.getElementsByTagName('object');
         for (var i = 0; i < objects.length; i++) {
             var edembed = XPCNativeWrapper.unwrap(objects.item(i));
@@ -85,12 +108,25 @@ XULEdembedChrome.BrowserOverlay = {
     },
 
     toggle: function(aEvent) {
+        var page = aEvent.originalTarget;
         XULEdembedChrome.BrowserOverlay.edembed_enabled = !XULEdembedChrome.BrowserOverlay.edembed_enabled;
 
         var button = document.getElementById("edembed-toggle");
         if (XULEdembedChrome.BrowserOverlay.edembed_enabled === true) {
+            // ugly workaround for a kb-focus issue
+            page.addEventListener("focus", XULEdembedChrome.BrowserOverlay.focus);
+            page.addEventListener("blur", XULEdembedChrome.BrowserOverlay.blur);
+
+            XULEdembedChrome.BrowserOverlay.replaceTextareas();
+            
             button.image = "chrome://edembed/content/enabled.png";
         } else {
+            // ugly workaround for a kb-focus issue
+            page.removeEventListener("focus", XULEdembedChrome.BrowserOverlay.focus);
+            page.removeEventListener("blur", XULEdembedChrome.BrowserOverlay.blur);
+
+            XULEdembedChrome.BrowserOverlay.restoreTextareas();
+
             button.image = "chrome://edembed/content/disabled.png";
         }
     }
