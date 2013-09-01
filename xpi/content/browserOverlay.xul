@@ -16,6 +16,7 @@
         oncommand="XULEdembedChrome.BrowserOverlay.toggle(event)" 
         label="edembed-toggle" 
         image="chrome://edembed/content/enabled.png" 
-        tooltiptext="disable or enable edembed" />
+        tooltiptext="Toggle Edembed" 
+        removable="true" />
   </toolbar>
 </overlay>
