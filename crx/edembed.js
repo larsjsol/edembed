@@ -7,16 +7,20 @@ var Edembed = {
             var textNode = textareas.item(i);
             var parent = textNode.parentNode;
             var edembedNode = Edembed.pluginNode(textNode);
-            parent.insertBefore(edembedNode, textNode);
 
-            // so we have a way of restoring their original state
-            textNode.edembed_hidden_bak = textNode.hidden;
-            textNode.edembed_display_bak = textNode.style.display;
+            //don't bother firing up an editor unless the textarea is of a certain height
+            if (textNode.clientHeight > 100) {
+                parent.insertBefore(edembedNode, textNode);
 
-            // hide it
-            textNode.hidden = "true";
-            textNode.style.display = "none";
-            textNode.form.addEventListener("submit", function(){textNode.value = edembedNode.text;});
+                // so we have a way of restoring their original state
+                textNode.edembed_hidden_bak = textNode.hidden;
+                textNode.edembed_display_bak = textNode.style.display;
+
+                // hide it
+                textNode.hidden = "true";
+                textNode.style.display = "none";
+                textNode.form.addEventListener("submit", function(){textNode.value = edembedNode.text;});
+            }
         }
     },
 
@@ -24,9 +28,11 @@ var Edembed = {
         var textareas = document.getElementsByTagName('textarea');
         for (var i = 0; i < textareas.length; i++) {
             var textNode = textareas.item(i);
-            textNode.hidden = textNode.edembed_hidden_bak;
-            textNode.style.display = textNode.edembed_display_bak;
-            textNode.form.removeEventListener("submit", function(){textNode.value = edembedNode.text;}); // FIXME maybe
+            if ("edembed_hidden_bak" in textNode) { //some textares are left alone
+                textNode.hidden = textNode.edembed_hidden_bak;
+                textNode.style.display = textNode.edembed_display_bak;
+                textNode.form.removeEventListener("submit", function(){textNode.value = edembedNode.text;}); // FIXME maybe
+            }
         }
 
         var objects = document.getElementsByTagName('object');
