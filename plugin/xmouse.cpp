@@ -1,5 +1,7 @@
 #include "xmouse.h"
 
+#include <unistd.h>
+
 Xmouse* Xmouse::instance = NULL;
 int Xmouse::no_subscribers = 0;
 
@@ -74,6 +76,7 @@ void Xmouse::run() {
           emit release(root_x, root_y, mmevent.item);
       }
     }
+    usleep(100000);
   }
 }
 
