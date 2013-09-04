@@ -23,7 +23,6 @@ Edembed.Shared = {
                 // hide it
                 textNode.hidden = "true";
                 textNode.style.display = "none";
-                textNode.form.addEventListener("submit", function(){textNode.value = edembedNode.text;});
             }
         }
     }, 
@@ -35,7 +34,6 @@ Edembed.Shared = {
             if ("edembed_hidden_bak" in textNode) { //some textares are left alone
                 textNode.hidden = textNode.edembed_hidden_bak;
                 textNode.style.display = textNode.edembed_display_bak;
-                textNode.form.removeEventListener("submit", function(){textNode.value = edembedNode.text;}); // FIXME maybe
             }
         }
 
@@ -49,7 +47,7 @@ Edembed.Shared = {
     },
 
     pluginNode: function(textarea) {
-        var node = Edembed.Shared.document().createElement('object');
+        var node = Edembed.Shared.unwrap(Edembed.Shared.document().createElement('object'));
         for (var j = 0; j < textarea.attributes.length; j++)
             node.setAttribute(textarea.attributes.item(j).name, textarea.attributes.item(j).value);
         node.type = "application/x-edembed";
@@ -57,20 +55,40 @@ Edembed.Shared = {
         node.width = textarea.clientWidth;
         node.name = "edembed_" + textarea.name;
         node.id = "edembed_" + textarea.id;
+        node.setAttribute("textarea_id", "" + textarea.id);
         node.setAttribute("originalText", textarea.value);
-        return Edembed.Shared.unwrap(node);
+        return node;
     },
 
     onPageLoad: function(aEvent) {
+        var page = Edembed.Shared.window(aEvent);
+        var forms = Edembed.Shared.document().getElementsByTagName("form");
+        for (var i = 0; i < forms.length; i++) {
+            var form = Edembed.Shared.unwrap(forms.item(i));
+            form.addEventListener("submit", function() {Edembed.Shared.onSubmit(form)});
+        }
+
         if (Edembed.Shared.enabled === true) {
-            var page = Edembed.Shared.window(aEvent);
             // ugly workaround for a kb-focus issue
             page.addEventListener("focus", Edembed.Shared.focus);
             page.addEventListener("blur", Edembed.Shared.blur);
 
+        if (Edembed.Shared.enabled === true) {
             Edembed.Shared.replaceTextareas();
         }
     },
+
+    onSubmit: function(form) {
+        var objects = Edembed.Shared.document().getElementsByTagName('object');
+        for (var i = 0; i < objects.length; i++) {
+            var object = Edembed.Shared.unwrap(objects.item(i));          
+            if (object.type === "application/x-edembed") {
+                var textarea_id = object.getAttribute("textarea_id");
+                var textarea = Edembed.Shared.unwrap(Edembed.Shared.document().getElementById(textarea_id));
+                textarea.value = object.text;
+            }
+        }
+     },
 
     focus: function(aEvent) {
         var page = Edembed.Shared.window(aEvent);
