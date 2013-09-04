@@ -39,18 +39,10 @@ Edembed.Mozilla.toggle = function(aEvent) {
 
     var button = document.getElementById("edembed-toggle");
     if (Edembed.Shared.enabled === true) {
-        // ugly workaround for a kb-focus issue
-        page.addEventListener("focus", Edembed.Shared.focus);
-        page.addEventListener("blur", Edembed.Shared.blur);
-
         Edembed.Shared.replaceTextareas();
             
         button.image = "chrome://edembed/content/enabled.png";
     } else {
-        // ugly workaround for a kb-focus issue
-        page.removeEventListener("focus", Edembed.Shared.focus);
-        page.removeEventListener("blur", Edembed.Shared.blur);
-
         Edembed.Shared.restoreTextareas();
 
         button.image = "chrome://edembed/content/disabled.png";

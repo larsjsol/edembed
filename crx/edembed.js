@@ -15,15 +15,8 @@ Edembed.Chromium.onMessage = function(request, sender, sendResponse) {
     if ("enabled" in request && request.enabled != Edembed.Shared.enabled) {
         Edembed.Shared.enabled = request.enabled;
         if (Edembed.Shared.enabled) {
-            
-            window.addEventListener("focus", Edembed.Shared.focus);
-            window.addEventListener("blur", Edembed.Shared.blur);
-
             Edembed.Shared.replaceTextareas();
         } else {
-            window.removeEventListener("focus", Edembed.Shared.focus);
-            window.removeEventListener("blur", Edembed.Shared.blur);
-                
             Edembed.Shared.restoreTextareas();
         }
     }

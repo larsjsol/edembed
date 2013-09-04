@@ -68,10 +68,10 @@ Edembed.Shared = {
             form.addEventListener("submit", function() {Edembed.Shared.onSubmit(form)});
         }
 
-        if (Edembed.Shared.enabled === true) {
-            // ugly workaround for a kb-focus issue
-            page.addEventListener("focus", Edembed.Shared.focus);
-            page.addEventListener("blur", Edembed.Shared.blur);
+        // ugly workaround for a kb-focus issue
+        page.addEventListener("focus", Edembed.Shared.focus);
+        page.addEventListener("blur", Edembed.Shared.blur);
+
 
         if (Edembed.Shared.enabled === true) {
             Edembed.Shared.replaceTextareas();
@@ -94,8 +94,9 @@ Edembed.Shared = {
         var page = Edembed.Shared.window(aEvent);
         var objects = Edembed.Shared.document().getElementsByTagName('object');
         for (var i = 0; i < objects.length; i++) {
-            var edembed = Edembed.Shared.unwrap(objects.item(i));
-            edembed.pageFocus();
+            var object = Edembed.Shared.unwrap(objects.item(i));
+            if (object.type === "application/x-edembed")
+                object.pageFocus();
         }
     },
 
@@ -103,8 +104,9 @@ Edembed.Shared = {
         var page = Edembed.Shared.window(aEvent);
         var objects = Edembed.Shared.document().getElementsByTagName('object');
         for (var i = 0; i < objects.length; i++) {
-            var edembed = Edembed.Shared.unwrap(objects.item(i));
-            edembed.pageBlur();
+            var object = Edembed.Shared.unwrap(objects.item(i));
+            if (object.type === "application/x-edembed")
+                object.pageBlur();
         }
     },
 
@@ -122,6 +124,3 @@ Edembed.Shared = {
     }
 
 };
-
-
-
