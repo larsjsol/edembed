@@ -16,7 +16,7 @@ Q_OBJECT
 Q_CLASSINFO("MIME", "application/x-edembed:---:--")
 //Q_CLASSINFO("ToSuperClass", "Edembed")
   Q_PROPERTY(QString text READ text WRITE setText)
-  Q_CLASSINFO("DefaultProperty", "text")
+  //  Q_CLASSINFO("DefaultProperty", "text")
 public:
   Edembed(QWidget *parent = 0);
   virtual ~Edembed();
