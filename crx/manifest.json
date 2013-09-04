@@ -5,7 +5,7 @@
     "description": "Edit online text with proper editors",
     "version": "0.1.1",
 
-    "permissions": ["plugins", "tabs", "<all_urls>"],
+    "permissions": ["tabs", "<all_urls>"],
 
     "plugins": [
         { 
@@ -17,7 +17,7 @@
     "content_scripts": [
         {
             "matches": ["<all_urls>"],
-            "js": ["edembed.js"]
+            "js": ["lib.js", "edembed.js"]
         }
     ],
 

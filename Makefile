@@ -2,7 +2,7 @@ SHELL = /bin/bash
 
 all: edembed.xpi edembed.crx
 
-edembed.xpi: $(wildcard xpi/*) $(wildcard xpi/content/*) xpi/plugins/libedembed.so
+edembed.xpi: $(wildcard xpi/*) $(wildcard xpi/content/*) xpi/plugins/libedembed.so xpi/content/lib.js
 	cd xpi; zip edembed $$(/usr/bin/find .)
 	mv xpi/edembed.zip edembed.xpi
 
@@ -10,7 +10,10 @@ xpi/plugins/libedembed.so: plugin/libedembed.so
 	mkdir -p xpi/plugins/
 	cp plugin/libedembed.so xpi/plugins/libedembed.so
 
-edembed.crx: $(wildcard crx/*) crx/libedembed.so edembed.pem
+xpi/content/lib.js: js/lib.js
+	cp js/lib.js xpi/content/lib.js
+
+edembed.crx: $(wildcard crx/*) crx/libedembed.so edembed.pem crx/lib.js
 	bash pack_crx.sh crx/ edembed.pem
 
 crx/libedembed.so: plugin/libedembed.so
@@ -18,6 +21,9 @@ crx/libedembed.so: plugin/libedembed.so
 
 edembed.pem:
 	openssl req -new -newkey rsa:1024 -days 365 -nodes -x509 -keyout edembed.pem
+
+crx/lib.js: js/lib.js
+	cp js/lib.js crx/lib.js
 
 plugin/libedembed.so: $(wildcard plugin/*.h) $(wildcard plugin/*.cpp) $(wildcard plugin/.*pro) submodules
 	cd plugin; qmake; make

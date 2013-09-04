@@ -8,3 +8,5 @@ moc_*
 *.zip
 *.crx
 *.pem
+crx/lib.js
+xpi/content/lib.js

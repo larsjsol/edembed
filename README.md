@@ -50,4 +50,3 @@ Try using `command=gvim --socketid %x %f` or `command=xterm -into %x -e "/usr/bi
 
 ## TODO
 * create a control panel
-* create a common javascript library for both the Firefox and Chromium extensions
