@@ -91,7 +91,6 @@ Edembed.Shared = {
      },
 
     focus: function(aEvent) {
-        var page = Edembed.Shared.window(aEvent);
         var objects = Edembed.Shared.document().getElementsByTagName('object');
         for (var i = 0; i < objects.length; i++) {
             var object = Edembed.Shared.unwrap(objects.item(i));
@@ -101,7 +100,6 @@ Edembed.Shared = {
     },
 
     blur: function(aEvent) {
-        var page = Edembed.Shared.window(aEvent);
         var objects = Edembed.Shared.document().getElementsByTagName('object');
         for (var i = 0; i < objects.length; i++) {
             var object = Edembed.Shared.unwrap(objects.item(i));
