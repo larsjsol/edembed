@@ -33,11 +33,11 @@ Edembed::Edembed(QWidget *parent)
   }                       
 
 
-  if (html_parameters.contains("originaltext") && html_parameters.contains("id")) 
-    tmpfile = getTempFile(html_parameters["id"].toByteArray(),
+  if (html_parameters.contains("originaltext") && html_parameters.contains("suffix")) 
+    tmpfile = getTempFile(html_parameters["suffix"].toByteArray(),
                           html_parameters["originaltext"].toByteArray());
   else
-    tmpfile = getTempFile("", "");
+    tmpfile = getTempFile(".edembed", "");
 
   //first figure out which command we should run
   if (!settings.contains("command"))
@@ -148,19 +148,11 @@ void Edembed::format(QString *frm_str, const QString &filename, const QString &x
   frm_str->replace("%x", xid);
 }
 
-QTemporaryFile* Edembed::getTempFile(const QByteArray &textarea_id, const QByteArray &originaltext) {
-  //first add some default values if the section "[suffixes]" does not exist
-  if (!settings.childGroups().contains("suffixes")) {
-    settings.setValue("suffixes/wiki__text", ".dokuwiki");
-    settings.setValue("suffixes/wpTextbox1", ".mediawiki");
-  }
-  
-  QString id = QString(textarea_id).replace("edembed_", "");
-  settings.beginGroup("suffixes");
-  QString suffix = settings.value(id, ".txt").toString();
-  settings.endGroup();
+QTemporaryFile* Edembed::getTempFile(const QByteArray &suffix, const QByteArray &originaltext) {
+  QString cleaned_suffix = QString(suffix);
+  cleaned_suffix.remove(QRegExp("[^-A-Za-z_.]"));
 
-  QTemporaryFile *tmp = new QTemporaryFile(QDir::tempPath() + "/" + "edembed_XXXXXX" + suffix);
+  QTemporaryFile *tmp = new QTemporaryFile(QDir::tempPath() + "/" + "edembed_XXXXXX" + cleaned_suffix);
   tmp->open();
     tmp->write(originaltext);
   tmp->close();

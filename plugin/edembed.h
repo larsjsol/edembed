@@ -33,7 +33,7 @@ protected:
   bool event(QEvent *event);
 private:
   void format(QString *frm_str, const QString &filename, const QString &xid);
-  QTemporaryFile* getTempFile(const QByteArray &textarea_id, const QByteArray &originalText);
+  QTemporaryFile* getTempFile(const QByteArray &suffix, const QByteArray &originalText);
   
   bool tabVisible; //are we in a visible tab
   bool windowActive; //is the browser window active

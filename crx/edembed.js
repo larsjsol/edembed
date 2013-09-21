@@ -22,6 +22,26 @@ Edembed.Chromium.onMessage = function(request, sender, sendResponse) {
     }
 }
 
+Edembed.Chromium.save = function(name, value) {
+    localStorage[name] = value;
+}
+
+Edembed.Chromium.load = function(name) {
+    return localStorage[name];
+}
+
+Edembed.Chromium.defaultOptions = function() {
+    localStorage["min_height"] = 100;
+
+    localStorage["default_suffix"] = ".edembed";
+    localStorage["suffixes.wiki__text"] = ".dokuwiki";
+    localStorage["suffixes.wpTextbox1"] = ".mediawiki";
+    
+    localStorage["blacklist.composebody"] = true; //roundcube webmail
+    localStorage["textarea_DWT28"] = true; //zimbra6
+}
+
+Edembed.Chromium.defaultOptions();
 chrome.runtime.onMessage.addListener(Edembed.Chromium.onMessage);
 Edembed.Shared.onPageLoad();
 

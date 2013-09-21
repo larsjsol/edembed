@@ -21,7 +21,7 @@ Edembed.Mozilla.init = function() {
     if(gBrowser) 
         gBrowser.addEventListener("DOMContentLoaded", Edembed.Shared.onPageLoad, false);
 
-    var firstRun = "extensions.edembed.firstRun";
+    var firstRun = "extensions.edembed.first_run";
     if (Application.prefs.getValue(firstRun, false)) {
         Application.prefs.setValue(firstRun, false);
         
@@ -59,4 +59,12 @@ Edembed.Mozilla.document = function() {
 
 Edembed.Mozilla.window = function(event) {
     return event.originalTarget;
+}
+
+Edembed.Mozilla.save = function(name, value) {
+    Application.prefs.setValue("extensions.edembed." + name, value);
+}
+
+Edembed.Mozilla.load = function(name) {
+    return Application.prefs.getValue("extensions.edembed." + name, undefined);
 }

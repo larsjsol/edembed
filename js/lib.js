@@ -12,8 +12,11 @@ Edembed.Shared = {
             var parent = textNode.parentNode;
             var edembedNode = Edembed.Shared.pluginNode(textNode);
             
-            //don't bother firing up an editor unless the textarea is of a certain height
-            if (textNode.clientHeight > 100) {
+            if (textNode.clientHeight >= Edembed.Shared.load("min_height") && 
+                //don't bother firing up an editor unless the textarea is of a certain height
+                !Edembed.Shared.load("blacklist." + textNode.id)) {
+                //or if it's blacklisted
+
                 parent.insertBefore(edembedNode, textNode);
 
                 // so we have a way of restoring their original state
@@ -55,6 +58,13 @@ Edembed.Shared = {
         node.width = textarea.clientWidth;
         node.name = "edembed_" + textarea.name;
         node.id = "edembed_" + textarea.id;
+
+        var suffix = Edembed.Shared.load("suffixes." + textarea.id);
+        if (!suffix) 
+            node.setAttribute("suffix", Edembed.Shared.load("default_suffix"));
+        else 
+            node.setAttribute("suffix", suffix);
+
         node.setAttribute("textarea_id", "" + textarea.id);
         node.setAttribute("originalText", textarea.value);
         return node;
@@ -108,7 +118,6 @@ Edembed.Shared = {
         }
     },
 
-
     unwrap: function(node) {
         return node;
     },
@@ -119,6 +128,14 @@ Edembed.Shared = {
 
     window: function() {
         return window;
-    }
+    },
+
+    save: function(name, value) {
+        throw "not implemented";
+    },
+
+    load: function(name) {
+        throw "not implemented";
+    }, 
 
 };
