@@ -54,14 +54,13 @@ For Vim. Add the following to your .vimrc:
 :set guioptions-=m   "remove menu bar
 :set guioptions-=T   "remove toolbar
 :set guioptions-=r   "remove right-hand scroll bar
-
 ```
 
 For Emacs. Add the following to your .emacs:
 ```
 (tool-bar-mode -1)   ;remove toolbar
 (menu-bar-mode -1)   ;remove menu bar 
-(scroll-bar-mode -1) ; remove scroll bar
+(scroll-bar-mode -1) ;remove scroll bar
 ```
 
 #### Other options
