@@ -37,16 +37,38 @@ This will create a Firefox extension (edembed.xpi) and a Chromium extension (ede
 
 ### Configuring
 
-The default config file looks like this:
+#### Editor options
+You can set your preferred [XEMBED](http://standards.freedesktop.org/xembed-spec/xembed-spec-latest.html)-capable editor by changing the value of the command-key in $HOME/.config/edembed/edembed.conf. 
 ```
 [General]
 command=emacs --parent-id %x %f
 ```
 Where %x represents the id of the window the editor will embed itself in and %f the name of a temporary file.
 
-You can set your preferred [XEMBED](http://standards.freedesktop.org/xembed-spec/xembed-spec-latest.html)-capable editor by changing the value of the command-key in $HOME/.config/edembed/edembed.conf. 
-
 Try using `command=gvim --socketid %x %f` or `command=xterm -into %x -e "/usr/bin/your_favorite_editor %f"`.
+
+You might want to disable tooblars, scrollbars, etc. in order to make the editor window less cramped.  
+
+For Vim. Add the following to your .vimrc:
+```
+:set guioptions-=m   "remove menu bar
+:set guioptions-=T   "remove toolbar
+:set guioptions-=r   "remove right-hand scroll bar
+
+```
+
+For Emacs. Add the following to your .emacs:
+```
+(tool-bar-mode -1)   ;remove toolbar
+(menu-bar-mode -1)   ;remove menu bar 
+(scroll-bar-mode -1) ; remove scroll bar
+```
+
+#### Other options
+
+Options in firefox can be changed by going to `about:config` and using "edembed" as the search term, while Chromium users can bring up the console by pressing `Ctrl-Shift-J` and modify the `localStorage` dictionary.
+
+The options should be mostly self-explanatory. The entries starting with `suffixes.` and `blacklist.` are used to match the id-property of textareas.  
 
 ## TODO
 * create a control panel
