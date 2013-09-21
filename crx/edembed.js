@@ -31,14 +31,17 @@ Edembed.Chromium.load = function(name) {
 }
 
 Edembed.Chromium.defaultOptions = function() {
-    localStorage["min_height"] = 100;
+    if (!("first_run" in localStorage)) {
+        localStorage["first_run"] = false;
+        localStorage["min_height"] = 100;
 
-    localStorage["default_suffix"] = ".edembed";
-    localStorage["suffixes.wiki__text"] = ".dokuwiki";
-    localStorage["suffixes.wpTextbox1"] = ".mediawiki";
+        localStorage["default_suffix"] = ".edembed";
+        localStorage["suffixes.wiki__text"] = ".dokuwiki";
+        localStorage["suffixes.wpTextbox1"] = ".mediawiki";
     
-    localStorage["blacklist.composebody"] = true; //roundcube webmail
-    localStorage["textarea_DWT28"] = true; //zimbra6
+        localStorage["blacklist.composebody"] = true; //roundcube webmail
+        localStorage["blacklist.textarea_DWT28"] = true; //zimbra6
+    }
 }
 
 Edembed.Chromium.defaultOptions();
