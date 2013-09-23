@@ -47,8 +47,8 @@ Edembed.Chromium.defaultOptions = function() {
         localStorage["min_height"] = 100;
 
         localStorage["default_suffix"] = ".edembed";
-        localStorage["suffixes.wiki__text"] = ".dokuwiki";
-        localStorage["suffixes.wpTextbox1"] = ".mediawiki";
+        localStorage["suffixes.^wiki__text$"] = ".dokuwiki";
+        localStorage["suffixes.^wpTextbox1$"] = ".mediawiki";
     
         localStorage["blacklist.^composebody$"] = true; //roundcube webmail
         localStorage["blacklist.^textarea_DWT\\d+$"] = true; //zimbra6

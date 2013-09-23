@@ -60,7 +60,7 @@ Edembed.Shared = {
         node.name = "edembed_" + textarea.name;
         node.id = "edembed_" + textarea.id;
 
-        var suffix = Edembed.Shared.load("suffixes." + textarea.id);
+        var suffix = Edembed.Shared.load_match(textarea.id, "suffixes");
         if (!suffix) 
             node.setAttribute("suffix", Edembed.Shared.load("default_suffix"));
         else 
@@ -128,7 +128,7 @@ Edembed.Shared = {
             if (regexp.test(string))
                 return Edembed.Shared.load(branch + "." + child);
         }
-        return false
+        return undefined;
     },
 
     unwrap: function(node) {
