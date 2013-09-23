@@ -30,6 +30,17 @@ Edembed.Chromium.load = function(name) {
     return localStorage[name];
 }
 
+Edembed.Chromium.pref_child_keys = function(branch) {
+    var children = [];
+    branch = branch + ".";
+    for (var key in localStorage) {
+        if (key.substring(0, branch.length) === branch) {
+            children.push(key.substring(branch.length));
+        }
+    }
+    return children;
+}
+
 Edembed.Chromium.defaultOptions = function() {
     if (!("first_run" in localStorage)) {
         localStorage["first_run"] = false;
@@ -39,8 +50,8 @@ Edembed.Chromium.defaultOptions = function() {
         localStorage["suffixes.wiki__text"] = ".dokuwiki";
         localStorage["suffixes.wpTextbox1"] = ".mediawiki";
     
-        localStorage["blacklist.composebody"] = true; //roundcube webmail
-        localStorage["blacklist.textarea_DWT28"] = true; //zimbra6
+        localStorage["blacklist.^composebody$"] = true; //roundcube webmail
+        localStorage["blacklist.^textarea_DWT\\d+$"] = true; //zimbra6
     }
 }
 

@@ -11,10 +11,11 @@ Edembed.Shared = {
             var textNode = textareas.item(i);
             var parent = textNode.parentNode;
             var edembedNode = Edembed.Shared.pluginNode(textNode);
-            
-            if (textNode.clientHeight >= Edembed.Shared.load("min_height") && 
+            var blacklisted = Edembed.Shared.load_match(textNode.id, "blacklist");
+ 
+           if (textNode.clientHeight >= Edembed.Shared.load("min_height") && 
                 //don't bother firing up an editor unless the textarea is of a certain height
-                !Edembed.Shared.load("blacklist." + textNode.id)) {
+                !blacklisted) {
                 //or if it's blacklisted
 
                 parent.insertBefore(edembedNode, textNode);
@@ -118,6 +119,18 @@ Edembed.Shared = {
         }
     },
 
+    load_match: function(string, branch) {
+        var children = Edembed.Shared.pref_child_keys(branch);
+        for (var i = 0; i < children.length; i++) {
+            var child = children[i];
+
+            regexp = new RegExp(child);
+            if (regexp.test(string))
+                return Edembed.Shared.load(branch + "." + child);
+        }
+        return false
+    },
+
     unwrap: function(node) {
         return node;
     },
@@ -137,5 +150,9 @@ Edembed.Shared = {
     load: function(name) {
         throw "not implemented";
     }, 
+
+    pref_child_keys: function(branch) {
+        throw "not implemented";
+    }
 
 };

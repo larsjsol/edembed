@@ -68,3 +68,11 @@ Edembed.Mozilla.save = function(name, value) {
 Edembed.Mozilla.load = function(name) {
     return Application.prefs.getValue("extensions.edembed." + name, undefined);
 }
+
+Edembed.Mozilla.pref_child_keys = function(branch) {
+    var pref_branch = Components.classes["@mozilla.org/preferences-service;1"]
+        .getService(Components.interfaces.nsIPrefService);
+    pref_branch = pref_branch.getBranch("extensions.edembed." + branch + ".");
+    var outval = [];
+    return pref_branch.getChildList("", outval);
+}
