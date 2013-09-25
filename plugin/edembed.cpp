@@ -128,10 +128,10 @@ void Edembed::onSubmit() {
     QString command = settings.value("onsubmit").toString();
     format(command);
 
-    process = new QProcess(this);
+    QProcess process(this);
     qDebug() << "running:" << command;
-    process->start(command);
-    process->waitForFinished();
+    process.start(command);
+    process.waitForFinished();
   }
 }
 
