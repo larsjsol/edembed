@@ -43,7 +43,7 @@ Edembed::Edembed(QWidget *parent)
   if (!settings.contains("command"))
     settings.setValue("command", "emacs --parent-id %x %f");
   QString command = settings.value("command").toString();
-  format(&command, tmpfile->fileName(), QString::number(container->winId()));
+  format(command);
   qDebug() << "editor command:" << command;
   
   //start an editor that embeds itself into our widget
@@ -121,6 +121,20 @@ void Edembed::pageBlur() {
   container->releaseKeyboard();
 }
 
+void Edembed::onSubmit() {
+  qDebug() << "onSubmit()";
+
+  if (settings.contains("onsubmit")) {
+    QString command = settings.value("onsubmit").toString();
+    format(command);
+
+    process = new QProcess(this);
+    qDebug() << "running:" << command;
+    process->start(command);
+    process->waitForFinished();
+  }
+}
+
 void Edembed::resizeEvent(QResizeEvent *event) {
   //qDebug() << "resizeEvent()" << event->size().width() << "x" << event->size().height();
   container->setGeometry(0, 0, event->size().width(), event->size().height());
@@ -143,9 +157,9 @@ bool Edembed::event(QEvent *event) {
 }
 
 
-void Edembed::format(QString *frm_str, const QString &filename, const QString &xid) {
-  frm_str->replace("%f", filename);
-  frm_str->replace("%x", xid);
+void Edembed::format(QString &frm_str) {
+  frm_str.replace("%f", tmpfile->fileName());
+  frm_str.replace("%x", QString::number(container->winId()));
 }
 
 QTemporaryFile* Edembed::getTempFile(const QByteArray &suffix, const QByteArray &originaltext) {

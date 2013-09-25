@@ -76,7 +76,11 @@ Edembed.Shared = {
         var forms = Edembed.Shared.document().getElementsByTagName("form");
         for (var i = 0; i < forms.length; i++) {
             var form = Edembed.Shared.unwrap(forms.item(i));
-            form.addEventListener("submit", function() {Edembed.Shared.onSubmit(form)});
+            form.addEventListener("submit", function(event) {
+                event = Edembed.Shared.unwrap(event);
+                event.preventDefault();
+                Edembed.Shared.onSubmit(form);
+            });
         }
 
         // ugly workaround for a kb-focus issue
@@ -96,7 +100,9 @@ Edembed.Shared = {
             if (object.type === "application/x-edembed") {
                 var textarea_id = object.getAttribute("textarea_id");
                 var textarea = Edembed.Shared.unwrap(Edembed.Shared.document().getElementById(textarea_id));
+                object.onSubmit();
                 textarea.value = object.text;
+                form.submit();
             }
         }
      },

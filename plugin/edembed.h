@@ -28,11 +28,12 @@ public slots:
   void setText(const QString &text);
   void pageFocus();
   void pageBlur();
+  void onSubmit();
 protected:
   void resizeEvent(QResizeEvent *event);
   bool event(QEvent *event);
 private:
-  void format(QString *frm_str, const QString &filename, const QString &xid);
+  void format(QString &frm_str);
   QTemporaryFile* getTempFile(const QByteArray &suffix, const QByteArray &originalText);
   
   bool tabVisible; //are we in a visible tab
