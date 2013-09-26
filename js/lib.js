@@ -102,9 +102,9 @@ Edembed.Shared = {
                 var textarea = Edembed.Shared.unwrap(Edembed.Shared.document().getElementById(textarea_id));
                 object.onSubmit();
                 textarea.value = object.text;
-                form.submit();
             }
         }
+        form.submit();
      },
 
     focus: function(aEvent) {
