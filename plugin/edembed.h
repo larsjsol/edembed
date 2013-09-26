@@ -42,7 +42,7 @@ private:
   QX11EmbedContainer *container;
   Xmouse *xmouse;
   QTemporaryFile *tmpfile;
-  QSettings settings;
+  QSettings *settings;
 };
 
 #endif // EDEMBED_H

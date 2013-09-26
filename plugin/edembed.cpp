@@ -8,10 +8,6 @@
 
 Edembed::Edembed(QWidget *parent)
   : QWidget(parent), QtNPBindable() {
-  QCoreApplication::setOrganizationName("edembed"); // um...
-  QCoreApplication::setApplicationName("edembed");
-
-  qDebug() << "PID:" << QCoreApplication::applicationPid();
 
   //we cant get focus the normal way, so we use manymouse/xlib to get mousevents
   xmouse = Xmouse::subscribe();
@@ -24,14 +20,7 @@ Edembed::Edembed(QWidget *parent)
   container = new QX11EmbedContainer(this);
   qDebug() << "XID:" << container->winId();
 
-  qDebug() << "parameters:";
   QMap<QByteArray, QVariant> html_parameters = parameters();
-  QMap<QByteArray, QVariant>::const_iterator i = parameters().constBegin();
-  while (i != parameters().constEnd()) {
-    qDebug() << i.key() << "=" << i.value();
-    ++i;
-  }                       
-
 
   if (html_parameters.contains("originaltext") && html_parameters.contains("suffix")) 
     tmpfile = getTempFile(html_parameters["suffix"].toByteArray(),
@@ -40,16 +29,20 @@ Edembed::Edembed(QWidget *parent)
     tmpfile = getTempFile(".edembed", "");
 
   //first figure out which command we should run
-  if (!settings.contains("command"))
-    settings.setValue("command", "emacs --parent-id %x %f");
-  QString command = settings.value("command").toString();
+  QCoreApplication::setOrganizationName("edembed"); // um...
+  QCoreApplication::setApplicationName("edembed");
+  settings = new QSettings();
+
+  if (!settings->contains("command")) {
+    settings->setValue("command", "emacs --parent-id %x %f");
+  }
+  QString command = settings->value("command").toString();
   format(command);
   qDebug() << "editor command:" << command;
   
   //start an editor that embeds itself into our widget
   process = new QProcess(this);
   process->start(command);
-  qDebug() << "editor PID:" << process->pid();
   process->waitForStarted();
 
   //emacs ignores resizeevents until after it is done initializing
@@ -61,6 +54,7 @@ Edembed::~Edembed(){
   xmouse->unsubscribe(); //xmouse deletes itself
   process->terminate();
   process->waitForFinished();
+  delete settings;
   delete container;
   delete process;
   delete tmpfile;
@@ -122,10 +116,9 @@ void Edembed::pageBlur() {
 }
 
 void Edembed::onSubmit() {
-  qDebug() << "onSubmit()";
 
-  if (settings.contains("onsubmit")) {
-    QString command = settings.value("onsubmit").toString();
+  if (settings->contains("onsubmit")) {
+    QString command = settings->value("onsubmit").toString();
     format(command);
 
     QProcess process(this);
