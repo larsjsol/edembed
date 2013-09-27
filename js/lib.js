@@ -59,8 +59,6 @@ Edembed.Shared = {
 
     pluginNode: function(textarea) {
         var node = Edembed.Shared.unwrap(Edembed.Shared.document().createElement('object'));
-        for (var j = 0; j < textarea.attributes.length; j++)
-            node.setAttribute(textarea.attributes.item(j).name, textarea.attributes.item(j).value);
         node.type = "application/x-edembed";
         node.height = textarea.clientHeight;
         node.width = textarea.clientWidth;
