@@ -27,6 +27,13 @@ Edembed.Shared = {
                 // hide it
                 textNode.hidden = "true";
                 textNode.style.display = "none";
+
+               var form = Edembed.Shared.unwrap(textNode.form);
+               form.addEventListener("submit", function(event) {
+                   event = Edembed.Shared.unwrap(event);
+                   event.preventDefault();
+                   Edembed.Shared.onSubmit(form);
+               });
             }
         }
     }, 
@@ -72,18 +79,8 @@ Edembed.Shared = {
     },
 
     onPageLoad: function(aEvent) {
-        var page = Edembed.Shared.window(aEvent);
-        var forms = Edembed.Shared.document().getElementsByTagName("form");
-        for (var i = 0; i < forms.length; i++) {
-            var form = Edembed.Shared.unwrap(forms.item(i));
-            form.addEventListener("submit", function(event) {
-                event = Edembed.Shared.unwrap(event);
-                event.preventDefault();
-                Edembed.Shared.onSubmit(form);
-            });
-        }
-
         // ugly workaround for a kb-focus issue
+        var page = Edembed.Shared.window(aEvent);
         page.addEventListener("focus", Edembed.Shared.focus);
         page.addEventListener("blur", Edembed.Shared.blur);
 
