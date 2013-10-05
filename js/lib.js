@@ -12,10 +12,11 @@ Edembed.Shared = {
             var parent = textNode.parentNode;
             var edembedNode = Edembed.Shared.pluginNode(textNode);
             var blacklisted = Edembed.Shared.load_match(textNode.id, "blacklist");
+            var whitelisted = Edembed.Shared.load_match(textNode.id, "whitelist");
  
            if (textNode.clientHeight >= Edembed.Shared.load("min_height") && 
                 //don't bother firing up an editor unless the textarea is of a certain height
-                !blacklisted) {
+               (whitelisted || !blacklisted)) {
                 //or if it's blacklisted
 
                 parent.insertBefore(edembedNode, textNode);
