@@ -116,7 +116,6 @@ void Edembed::pageBlur() {
 }
 
 void Edembed::onSubmit() {
-
   if (settings->contains("onsubmit")) {
     QString command = settings->value("onsubmit").toString();
     format(command);

@@ -30,11 +30,15 @@ Edembed.Shared = {
                 textNode.style.display = "none";
 
                var form = Edembed.Shared.unwrap(textNode.form);
-               form.addEventListener("submit", function(event) {
-                   event = Edembed.Shared.unwrap(event);
-                   event.preventDefault();
-                   Edembed.Shared.onSubmit(form);
-               });
+               var inputs = Edembed.Shared.unwrap(form.getElementsByTagName('input'));
+               for (var i = 0; i < inputs.length; i++) {
+                   if (inputs.item(i).type == 'submit') {
+                       inputs.item(i).addEventListener("click", function(event) {
+                           event = Edembed.Shared.unwrap(event);
+                           Edembed.Shared.onClick(event.target);
+                       });
+                   }
+               }
             }
         }
     }, 
@@ -89,7 +93,7 @@ Edembed.Shared = {
         }
     },
 
-    onSubmit: function(form) {
+    onClick: function(button) { 
         var objects = Edembed.Shared.document().getElementsByTagName('object');
         for (var i = 0; i < objects.length; i++) {
             var object = Edembed.Shared.unwrap(objects.item(i));          
@@ -100,8 +104,7 @@ Edembed.Shared = {
                 textarea.value = object.text;
             }
         }
-        form.submit();
-     },
+    },
 
     focus: function(aEvent) {
         var objects = Edembed.Shared.document().getElementsByTagName('object');
